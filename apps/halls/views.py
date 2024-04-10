@@ -2,7 +2,7 @@ from django.forms import BaseModelForm
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login
 from .models import Hall, Video
@@ -11,9 +11,12 @@ from .models import Hall, Video
 def home(request):
     return render(request, 'halls/home.html')
 
+def dashboard(request):
+    return render(request, 'halls/dashboard.html')
+
 class SignUp(CreateView):
     form_class = UserCreationForm
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('dashboard')
     template_name = 'registration/signup.html'
 
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
@@ -23,13 +26,29 @@ class SignUp(CreateView):
         user = authenticate(request=self.request, username=username, password=password)
         login(self.request, user)
         return valid
-        
+
 class CreateHall(CreateView):
     model = Hall
     fields = ['title']
     template_name = 'halls/create_hall.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('dashboard')
     
     def form_valid(self, form: BaseModelForm) -> HttpResponse:
         form.instance.user = self.request.user
         return super(CreateHall, self).form_valid(form)
+    
+class DetailHall(DetailView):
+    model = Hall
+    template_name = 'halls/detail_hall.html'
+
+class UpdateHall(UpdateView):
+    model = Hall
+    fields = ['title']
+    template_name = 'halls/update_hall.html'
+    success_url = reverse_lazy('dashboard')
+    
+
+class DeleteHall(DeleteView):
+    model = Hall
+    template_name = 'halls/delete_hall.html'
+    success_url = reverse_lazy('dashboard')
