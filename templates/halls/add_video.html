@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container ">
+<h2>Add Video</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary ">Add</button>
+</form>
+<br>
+<h2>OR</h2>
+<form method="post">
+    {{search_form.as_p }}
+    <button type="submit" class="btn btn-primary ">Search</button>
+</form>
+
+</div>
+{% endblock content %}
